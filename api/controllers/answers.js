@@ -7,7 +7,7 @@ const questionSchema = require("../models/question");
 const userSchema = require("../models/userModel");
 const ObjectId = require("mongoose").Types.ObjectId;
 
-//  + CREATE ANSWER---------------------------------
+//  + POST ANSWER---------------------------------
 
 module.exports.POST_ANSWER = async (req, res) => {
   const answer = new answerSchema({
@@ -51,24 +51,26 @@ module.exports.POST_ANSWER = async (req, res) => {
     });
 };
 
-// + GET ALL QUESTIONS -----------------------------------------
+// + GET ALL ANSWERS BY QUESTION ID -----------------------------------------
 
-// module.exports.GET_ALL_QUESTIONS = function (req, res) {
-//   questionSchema
-//     .find()
-//     .sort({ title: -1 })
-//     .then((results) => {
-//       return res.status(200).json({ Questions: results });
-//     });
-// };
+module.exports.GET_ALL_ANSWERS_BY_QUESTION_ID = function (req, res) {
+  console.log(req.params.id);
+  answerSchema
+    .find({ questionId: req.params.id })
+    .sort({ title: -1 })
+    .then((results) => {
+      console.log(results);
+      return res.status(200).json({ Answers: results });
+    });
+};
 
-// // + DELETE QUESTION BY ID-----------------------------------------
+// // + DELETE ANSWER BY ID-----------------------------------------
 
-// module.exports.DELETE_QUESTION_BY_ID = function (req, res) {
-//   questionSchema.deleteOne({ _id: req.params.id }).then((results) => {
-//     return res.status(200).json({ status: "Deleted", Questions: results });
-//   });
-// };
+module.exports.DELETE_ANSWER_BY_ID = function (req, res) {
+  answerSchema.deleteOne({ _id: req.params.id }).then((results) => {
+    return res.status(200).json({ status: "Deleted", Answers: results });
+  });
+};
 
 // // BUY TICKET-------------------------------------
 
