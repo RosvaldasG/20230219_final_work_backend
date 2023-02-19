@@ -2,39 +2,49 @@ const bcrypt = require("bcryptjs");
 const { rawListeners } = require("../models/userModel"); //neaišku kam
 const jwt = require("jsonwebtoken");
 
+const answerSchema = require("../models/answer");
 const questionSchema = require("../models/question");
 const userSchema = require("../models/userModel");
 const ObjectId = require("mongoose").Types.ObjectId;
 
-//  + CREATE QUESTION---------------------------------
+//  + CREATE ANSWER---------------------------------
 
-module.exports.POST_QUESTION = async (req, res) => {
-  const question = new questionSchema({
-    title: req.body.title,
-    questionText: req.body.questionText,
+module.exports.POST_ANSWER = async (req, res) => {
+  const answer = new answerSchema({
+    answerText: req.body.answerText,
     userId: req.body.userId,
-    answerId: [],
+    questionId: req.params.id,
   });
 
-  question
+  console.log("id iŠ linijos", req.params.id);
+
+  answer
     .save()
     .then((result) => {
-      console.log(result._id);
+      answerSchema
+        .updateOne({ _id: answer._id }, { answerId: answer._id })
+        .exec();
+      console.log("ID answer", result._id.toString());
       questionSchema
-        .updateOne({ _id: question._id }, { id: question._id })
+        .updateOne(
+          { _id: req.params.id },
+          { $push: { answerId: result._id.toString() } }
+        )
         .exec();
       userSchema
         .updateOne(
           { _id: req.body.userId },
-          { $push: { questions: result._id.toString() } }
+          { $push: { answers: result._id.toString() } }
         )
         .exec();
       return res.status(200).json({
-        response: "Ticket was created succses",
+        response: "Answer was created succses",
         result,
       });
     })
-
+    // .then((result) => {
+    //   console.log(result);
+    // })
     .catch((err) => {
       console.log("err", err);
       res.status(400).json({ responce: "error" });
@@ -43,22 +53,22 @@ module.exports.POST_QUESTION = async (req, res) => {
 
 // + GET ALL QUESTIONS -----------------------------------------
 
-module.exports.GET_ALL_QUESTIONS = function (req, res) {
-  questionSchema
-    .find()
-    .sort({ title: -1 })
-    .then((results) => {
-      return res.status(200).json({ Questions: results });
-    });
-};
+// module.exports.GET_ALL_QUESTIONS = function (req, res) {
+//   questionSchema
+//     .find()
+//     .sort({ title: -1 })
+//     .then((results) => {
+//       return res.status(200).json({ Questions: results });
+//     });
+// };
 
-// + DELETE QUESTION BY ID-----------------------------------------
+// // + DELETE QUESTION BY ID-----------------------------------------
 
-module.exports.DELETE_QUESTION_BY_ID = function (req, res) {
-  questionSchema.deleteOne({ _id: req.params.id }).then((results) => {
-    return res.status(200).json({ status: "Deleted", Questions: results });
-  });
-};
+// module.exports.DELETE_QUESTION_BY_ID = function (req, res) {
+//   questionSchema.deleteOne({ _id: req.params.id }).then((results) => {
+//     return res.status(200).json({ status: "Deleted", Questions: results });
+//   });
+// };
 
 // // BUY TICKET-------------------------------------
 
