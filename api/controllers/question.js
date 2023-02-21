@@ -80,6 +80,12 @@ module.exports.DELETE_QUESTION_BY_ID = async function (req, res) {
       return res.status(401).end();
 
     await questionSchema.deleteOne({ _id: req.params.id }).exec();
+    await userSchema
+      .updateOne(
+        { _id: questionData.userId },
+        { $pull: { questions: questionData.id } }
+      )
+      .exec();
     return res.status(200).json({ status: "Deleted" });
   } catch (error) {
     res.status(500).json({ response: "Failed" });
