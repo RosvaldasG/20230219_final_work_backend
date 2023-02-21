@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {
-  const token = req.headers.jwt_token;
+  const token = req.headers.user_jwt;
 
   // console.log(token);
 
@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
       next();
     } else {
       console.log("auth failed");
-      return res.status(401).json({ Error: "auth failed" });
+      return res.status(401).json("auth failed");
     }
   });
 };

@@ -6,6 +6,7 @@ const questionSchema = mongoose.Schema({
   userId: { type: String, required: [true, "can't be blank"] },
   answerId: { type: Array },
   id: { type: String },
+  timeStamp: { type: String },
 });
 
 module.exports = mongoose.model("FINAL_questions", questionSchema);

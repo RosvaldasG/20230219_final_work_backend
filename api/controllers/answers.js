@@ -14,6 +14,7 @@ module.exports.POST_ANSWER = async (req, res) => {
     answerText: req.body.answerText,
     userId: req.body.userId,
     questionId: req.params.id,
+    timeStamp: new Date(),
   });
 
   console.log("id iŠ linijos", req.params.id);
@@ -59,8 +60,14 @@ module.exports.GET_ALL_ANSWERS_BY_QUESTION_ID = function (req, res) {
     .find({ questionId: req.params.id })
     .sort({ title: -1 })
     .then((results) => {
+      const countAnswers = results.reduce((counter, obj) => {
+        // suskaičiuoja USERS pagal _id
+        console.log(counter);
+        if (obj._id) counter += 1;
+        return counter;
+      }, 0);
       console.log(results);
-      return res.status(200).json({ Answers: results });
+      return res.status(200).json({ results, countAnswers });
     });
 };
 
