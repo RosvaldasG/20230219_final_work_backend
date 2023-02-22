@@ -29,6 +29,8 @@ module.exports.REGISTER = async (req, res) => {
     user
       .save()
       .then((result) => {
+        console.log(user._id);
+        UserSchema.updateOne({ _id: user._id }, { id: user._id }).exec();
         const jwt_token = jwt.sign(
           {
             email: user.email,
@@ -85,6 +87,21 @@ module.exports.LOGIN = async (req, res) => {
   } catch (err) {
     return res.status(404).json({ status: "login failed" });
   }
+};
+
+/// CHECK LOGIN STATUS
+
+module.exports.CHECK_LOGIN_STATUS = async (req, res) => {
+  const user_jwt = await req.headers.user_jwt;
+  jwt.verify(user_jwt, process.env.JWT_SECRET, (err, decoded) => {
+    if (!err) {
+      return res.status(200).json({
+        status: "Login valid",
+      });
+    } else {
+      return res.status(400).json({ status: "Please Login or Register" });
+    }
+  });
 };
 
 // USER daugiau kaip ir nieko nereikia.

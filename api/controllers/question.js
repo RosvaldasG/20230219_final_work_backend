@@ -92,34 +92,23 @@ module.exports.DELETE_QUESTION_BY_ID = async function (req, res) {
   }
 };
 
-// // BUY TICKET-------------------------------------
+module.exports.GET_ALL_QUESTIONS_WITH_USER_DATA = async function (req, res) {
+  try {
+    const data = await questionSchema
+      .aggregate([
+        {
+          $lookup: {
+            from: "final_users",
+            localField: "userId",
+            foreignField: "id",
+            as: "userId",
+          },
+        },
+      ])
+      .exec();
 
-// module.exports.BUY_TICKET = async function (req, res) {
-//   const ticket = await ticketsSchema
-//     .findOne({ _id: req.body.ticket_id })
-//     .exec();
-
-//   console.log(ticket.ticket_price);
-
-//   const user = await userSchema.findOne({ _id: req.body.user_id }).exec();
-
-//   console.log(user);
-
-//   const moneyLeft = user.money_balance - ticket.ticket_price;
-//   console.log(moneyLeft);
-
-//   if (moneyLeft >= 0) {
-//     userSchema
-//       .updateOne(
-//         { _id: req.body.user_id },
-//         { $push: { bought_tickets: ticket._id.toString() } }
-//       )
-//       .updateOne({ _id: req.body.user_id }, { money_balance: moneyLeft })
-
-//       .then((result) => {
-//         res.status(200).json({ Message: "Ticket bought" });
-//       });
-//   } else {
-//     return res.status(400).json({ Message: "not enought money" });
-//   }
-// };
+    return res.status(200).json({ questions: data });
+  } catch (error) {
+    res.status(500).json({ response: "Failed" });
+  }
+};

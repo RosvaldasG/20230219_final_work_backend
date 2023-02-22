@@ -24,6 +24,7 @@ const userSchema = mongoose.Schema({
   questions: { type: Array },
   answers: { type: Array },
   timeStamp: { type: String },
+  id: { type: String },
 
   // reg_timestamp: { type: Date, default: Date.now },
 });
