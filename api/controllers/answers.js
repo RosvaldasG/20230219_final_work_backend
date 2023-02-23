@@ -117,62 +117,17 @@ module.exports.DELETE_ANSWER_BY_ID = async function (req, res) {
 };
 
 module.exports.CHANGE_ANSWER_LIKES = async function (req, res) {
-  try {
-    // const jwt_token = req.headers.user_jwt;
-    // if (!jwt_token) {
-    //   return res.status(401).end();
-    // }
-    // const tokenInfo = jwt.verify(jwt_token, process.env.JWT_SECRET);
+  const likes = req.body.likes;
 
-    const likes = req.body.likes;
+  const answerData = await answerSchema.findOne({ _id: req.params.id }).exec();
+  console.log(answerData.likes, likes);
 
-    const answerData = await answerSchema
-      .findOne({ _id: req.params.id })
-      .exec();
-    console.log(answerData.likes, likes);
-    // console.log(DateTime.Now("yyyy-MM-dd"));
-    const updatedLikes = answerData.likes + likes;
+  const updatedLikes = answerData.likes + likes;
 
-    console.log(updatedLikes);
-    // if (!(tokenInfo.userId === answerData.userId)) return res.status(401).end();
+  console.log(updatedLikes);
 
-    await answerSchema
-      .updateOne({ _id: req.params.id }, { likes: updatedLikes })
-      .exec();
-    return res.status(200).json({ status: "ddd" });
-  } catch (error) {
-    res.status(500).json({ response: "Failed" });
-  }
+  await answerSchema
+    .updateOne({ _id: req.params.id }, { likes: updatedLikes })
+    .exec();
+  return res.status(200).json({ status: "ddd" });
 };
-
-// // BUY TICKET-------------------------------------
-
-// module.exports.BUY_TICKET = async function (req, res) {
-//   const ticket = await ticketsSchema
-//     .findOne({ _id: req.body.ticket_id })
-//     .exec();
-
-//   console.log(ticket.ticket_price);
-
-//   const user = await userSchema.findOne({ _id: req.body.user_id }).exec();
-
-//   console.log(user);
-
-//   const moneyLeft = user.money_balance - ticket.ticket_price;
-//   console.log(moneyLeft);
-
-//   if (moneyLeft >= 0) {
-//     userSchema
-//       .updateOne(
-//         { _id: req.body.user_id },
-//         { $push: { bought_tickets: ticket._id.toString() } }
-//       )
-//       .updateOne({ _id: req.body.user_id }, { money_balance: moneyLeft })
-
-//       .then((result) => {
-//         res.status(200).json({ Message: "Ticket bought" });
-//       });
-//   } else {
-//     return res.status(400).json({ Message: "not enought money" });
-//   }
-// };
