@@ -107,3 +107,20 @@ module.exports.CHECK_LOGIN_STATUS = async (req, res) => {
     }
   });
 };
+
+// Functions
+// Check user name
+
+const checkName = (data) => {
+  return data.charAt(0).toUpperCase() + data.toLowerCase().slice(1);
+};
+
+// Check password
+
+const checkPassword = (data) => {
+  if (data.length < 6 || data.match(/\d+/) === null) {
+    return false;
+  } else {
+    return true;
+  }
+};
